@@ -11,13 +11,17 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Session configuration - use default secret if not set
+const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key-change-this-in-production';
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: { 
         maxAge: 365 * 24 * 60 * 60 * 1000, // 1 năm
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' // HTTPS only in production
     }
 }));
 
