@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/public/css/admin.css">
+    <link rel="stylesheet" href="/public/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="custom">
+            <img src="/public/images/banner.png" alt="banner trường THCS Huỳnh Thúc Kháng" style="width: 100%;">
+        </div>
+
+        <div class="sticky-header">
+            <div class="header">
+                <h1>Quản Trị Hệ Thống (<%= fullname %>)</h1>
+                <div>
+                    <a href="/admin/users" class="btn btn-primary">
+                        <i class="fas fa-users-cog"></i> Quản lý người dùng
+                    </a>
+                    <form action="/logout" method="post" id="logoutForm">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                    </form>
+                </div>
+            </div>
+
+            <form method="GET" class="filter-section">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <input type="date" name="from_date" class="form-control" value="<%= filters.from_date %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày</label>
+                        <input type="date" name="to_date" class="form-control" value="<%= filters.to_date %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Họ tên</label>
+                        <input type="text" name="fullname" class="form-control" value="<%= filters.fullname %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Cảm xúc</label>
+                        <select name="emotion" class="form-control">
+                            <option value="">Tất cả</option>
+                            <% emotionOptions.forEach(option => { %>
+                                <option value="<%= option %>" <%= filters.emotion === option ? 'selected' : '' %>><%= option %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 0px; text-align: right;">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Lọc</button>
+                    <a href="/admin" class="btn btn-primary"><i class="fas fa-sync"></i> Reset</a>
+                </div>
+            </form>
+
+            <div class="stats-container">
+                <% Object.keys(emotionStats).forEach(emotion => { %>
+                    <div class="stat-card" style="background: <%= getEmotionColor(emotion) %>">
+                        <h3 style="margin: 0; color: white;"><%= emotion %></h3>
+                        <p style="font-size: 24px; margin: 10px 0; color: white;"><%= emotionStats[emotion] %></p>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="scrollable-table">
+            <div class="tabs">
+                <button class="tablink active" data-tab="dataTab">Dữ liệu cảm xúc</button>
+                <button class="tablink" data-tab="missingDaysTab">Ngày chưa nhập</button>
+            </div>
+            
+            <div id="dataTab" class="tab-content active">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">STT</th>
+                            <th style="width: 70px;">Ngày</th>
+                            <th style="min-width: 150px;">Họ tên</th>
+                            <th style="min-width: 400px;">Tình huống</th>
+                            <th style="width: 100px;">Cảm xúc</th>
+                            <th style="min-width: 400px;">Phản ứng</th>
+                            <th style="min-width: 400px;">Kết quả</th>
+                            <th style="min-width: 400px;">Bài học</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% emotionData.forEach((row, index) => { %>
+                            <tr>
+                                <td style="text-align: center;"><%= index + 1 %></td>
+                                <td><%= new Date(row.date).toLocaleDateString('vi-VN') %></td>
+                                <td><%= row.fullname %></td>
+                                <td class="content-cell"><%= row.situation %></td>
+                                <td><span class="emotion-tag" style="background: <%= getEmotionColor(row.emotion) %>"><%= row.emotion %></span></td>
+                                <td class="content-cell"><%= row.reaction %></td>
+                                <td class="content-cell"><%= row.result %></td>
+                                <td class="content-cell"><%= row.content %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="missingDaysTab" class="tab-content">
+                <div class="missing-days-report">
+                    <% if (missingDatesData.length === 0) { %>
+                        <div class="no-data">🎉 Tất cả user đã nhập đủ dữ liệu!</div>
+                    <% } else { %>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th style="width: 200px;">Họ tên</th>
+                                    <th style="min-width: 200px;">Danh sách ngày chưa nhập</th>
+                                    <th style="width: 180px;">Tổng số ngày chưa nhập</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% missingDatesData.forEach((user, index) => { %>
+                                    <tr>
+                                        <td style="text-align: center;"><%= index + 1 %></td>
+                                        <td><%= user.fullname %></td>
+                                        <td><%= user.formatted_dates.join('; ') %></td>
+                                        <td><%= user.count %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-footer">
+            <button onclick="exportCSV()" class="btn btn-primary">
+                <i class="fas fa-file-export"></i> Xuất Excel
+            </button>
+        </div>
+    </div>
+
+    <script src="/public/js/sweetalert2@11.js"></script>
+    <script src="/public/js/admin.js"></script>
+</body>
+</html>
+
+<%
+function getEmotionColor(emotion) {
+    const colors = {
+        'Vui vẻ': '#2ecc71',
+        'Buồn chán': '#34495e',
+        'Hoang mang': '#f1c40f',
+        'Tức giận': '#e74c3c',
+        'Bình thường': '#3498db'
+    };
+    return colors[emotion] || '#95a5a6';
+}
+%>

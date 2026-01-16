@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý người dùng</title>
+    <link rel="stylesheet" href="/public/css/admin.css">
+    <link rel="stylesheet" href="/public/css/admin_users.css">
+    <link rel="stylesheet" href="/public/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <h1>Quản lý người dùng</h1>
+            <a href="/admin" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+        </div>
+
+        <div class="user-form">
+            <h2><i class="fas fa-plus-circle"></i> Thêm người dùng mới</h2>
+            <form method="POST" action="/admin/users/add">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tên đăng nhập</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" name="fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Vai trò</label>
+                        <select name="role">
+                            <option value="client">client</option>
+                            <option value="admin">admin</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Thêm mới
+                </button>
+            </form>
+        </div>
+
+        <div class="scrollable-table">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Họ tên</th>
+                        <th>Vai trò</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.id %></td>
+                        <td><%= user.username %></td>
+                        <td><%= user.fullname %></td>
+                        <td><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></td>
+                        <td>
+                            <a href="/admin/users/edit/<%= user.id %>" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <button class="btn-delete btn btn-danger" onclick="confirmDelete(<%= user.id %>)">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/public/js/sweetalert2@11.js"></script>
+    <script>
+        <% if (notification) { %>
+            Swal.fire({
+                title: 'Thông báo',
+                text: '<%= notification.message %>',
+                icon: '<%= notification.status %>',
+                confirmButtonText: 'OK'
+            });
+        <% } %>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'add') {
+            Swal.fire('Thành công!', 'Thêm người dùng thành công!', 'success');
+        } else if (urlParams.get('success') === 'update') {
+            Swal.fire('Thành công!', 'Cập nhật người dùng thành công!', 'success');
+        } else if (urlParams.get('success') === 'delete') {
+            Swal.fire('Thành công!', 'Xóa người dùng thành công!', 'success');
+        }
+
+        function confirmDelete(userId) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa?',
+                text: "Hành động này không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/admin/users/delete';
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'user_id';
+                    input.value = userId;
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-title">
+                <div>TRƯỜNG THCS HUỲNH THÚC KHÁNG</div>
+                <div>NĂM HỌC 2025-2026</div>
+                <div>Lớp cô Liên - 9/4</div>
+            </div>
+
+            <% if (error) { %>
+                <div class="error-message"><%= error %></div>
+            <% } %>
+            
+            <form method="POST" action="/login">
+                <div class="textbox">
+                    <input type="text" name="username" placeholder="Tên người dùng" required>
+                </div>
+                <div class="textbox">
+                    <input type="password" name="password" placeholder="Mật khẩu" required>
+                </div>
+                <button type="submit" class="btn-login">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

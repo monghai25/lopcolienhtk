@@ -1,0 +1,110 @@
+/* Thêm vào cuối file admin.css */
+.user-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-form h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.btn-success {
+    background: var(--success-color);
+}
+
+.btn-warning {
+    background: #f39c12;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+}
+
+.btn-success:hover {
+    background: #27ae60;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+/* Định dạng cho các textbox */
+input[type="text"],
+input[type="password"],
+select {
+    width: 90%; /* Chiều rộng 90% */
+    padding: 10px; /* Khoảng cách bên trong */
+    margin: 5px 0; /* Khoảng cách bên ngoài */
+    border: 1px solid #ccc; /* Đường viền */
+    border-radius: 5px; /* Bo góc */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+    font-size: 16px; /* Kích thước chữ */
+    transition: border-color 0.3s; /* Hiệu ứng chuyển tiếp */
+}
+
+/* Định dạng cho textbox khi có focus */
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+    border-color: #007bff; /* Đổi màu đường viền khi focus */
+    outline: none; /* Ẩn outline mặc định */
+}
+
+/* Định dạng cho combobox */
+select {
+    background-size: 12px; /* Kích thước mũi tên */
+}
+
+/* Định dạng cho các button */
+.btn {
+    background-color: #007bff; /* Màu nền */
+    color: white; /* Màu chữ */
+    padding: 10px 15px; /* Khoảng cách bên trong */
+    border: none; /* Ẩn đường viền */
+    border-radius: 5px; /* Bo góc */
+    cursor: pointer; /* Con trỏ chuột */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển tiếp */
+    text-decoration: auto; /* Bỏ gạch chân */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Đổi màu khi hover */
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    padding: 12px;
+    padding-bottom: 9px;
+    margin-left: 10px;
+}
+
+.btn-delete:hover {
+    background-color: #cb2e1e;
+}
+
+/* Responsive cho form */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

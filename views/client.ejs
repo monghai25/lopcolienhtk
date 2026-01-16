@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Client</title>
+    <link rel="stylesheet" href="/public/css/style_client.css">
+</head>
+<body>
+    <div class="client-container">
+        <div class="header-section">
+            <h2>Chào mừng, <%= fullname %>!</h2>
+            
+            <div class="header-buttons">
+                <button type="button" class="btn-change-password">Đổi mật khẩu</button>
+
+                <form action="/logout" method="post" id="logoutForm">
+                    <button type="submit" class="btn-logout">Đăng xuất</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="emotion-list">     
+            <div class="add-section">
+                <button id="btn-add" class="btn-add">Thêm mới</button>
+            </div>       
+            
+            <h3>Danh sách cảm xúc</h3>
+
+            <ul id="emotionList">
+                <% 
+                const imageMap = {
+                    'Vui vẻ': 'happy.png',
+                    'Buồn chán': 'sad.png',
+                    'Hoang mang': 'confused.png',
+                    'Tức giận': 'angry.png',
+                    'Bình thường': 'normal.png'
+                };
+                
+                emotions.forEach(row => { 
+                    const emotionImage = imageMap[row.emotion] || 'default.png';
+                %>
+                    <li class="emotion-card"
+                        data-id="<%= row.id %>"
+                        data-situation="<%= row.situation %>"
+                        data-emotion="<%= row.emotion %>"
+                        data-date="<%= row.date %>"
+                        data-reaction="<%= row.reaction %>"
+                        data-result="<%= row.result %>"
+                        data-content="<%= row.content %>">
+                        <div class="card-content">
+                            <img src="/public/images/<%= emotionImage %>" alt="<%= row.emotion %>" class="emotion-icon">
+                            <div class="card-details">
+                                <strong><%= row.emotion %></strong>
+                                <span class="emotion-date"><%= row.date %></span>
+                                <p class="emotion-text">
+                                    <%= row.content.length > 100 ? row.content.substring(0, 100) + '...' : row.content %>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+
+            <% if (pagination.total_pages > 1) { %>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <% if (pagination.current_page > 1) { %>
+                        <a href="?page=<%= pagination.current_page - 1 %>" class="page-link prev">‹</a>
+                    <% } %>
+
+                    <% 
+                    const start = Math.max(1, pagination.current_page - 2);
+                    const end = Math.min(pagination.total_pages, pagination.current_page + 2);
+                    
+                    if (start > 1) { %>
+                        <span class="page-dots">...</span>
+                    <% }
+                    
+                    for (let i = start; i <= end; i++) { %>
+                        <a href="?page=<%= i %>" class="page-link <%= i === pagination.current_page ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% }
+                    
+                    if (end < pagination.total_pages) { %>
+                        <span class="page-dots">...</span>
+                    <% } %>
+
+                    <% if (pagination.current_page < pagination.total_pages) { %>
+                        <a href="?page=<%= pagination.current_page + 1 %>" class="page-link next">›</a>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Modal thêm/sửa cảm xúc -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span id="btn-close-1" class="close">&times;</span>
+                <h3><span id="modalTitle">Thêm mới cảm xúc</span></h3>
+                
+                <form id="emotionForm">
+                    <div class="form-fields-container">
+                        <div class="date-selector">
+                            <label for="date">Chọn ngày *</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+
+                        <div class="emotion-selector">
+                            <input type="hidden" id="emotionId" name="emotionId">
+
+                            <div class="form-group">
+                                <label for="situation">Tình huống *</label>
+                                <textarea id="situation" name="situation" rows="3"></textarea>
+                            </div>
+                            
+                            <div style="text-align: left;">Cảm xúc *</div>
+                            <div class="emotion-options">
+                                <label>
+                                    <input type="radio" name="emotion" value="Vui vẻ">
+                                    <img src="/public/images/happy.png" alt="Vui vẻ">
+                                    <span>Vui vẻ</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="emotion" value="Buồn chán">
+                                    <img src="/public/images/sad.png" alt="Buồn chán">
+                                    <span>Buồn chán</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="emotion" value="Hoang mang">
+                                    <img src="/public/images/confused.png" alt="Hoang mang"> 
+                                    <span>Hoang mang</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="emotion" value="Tức giận">
+                                    <img src="/public/images/angry.png" alt="Tức giận"> 
+                                    <span>Tức giận</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="emotion" value="Bình thường">
+                                    <img src="/public/images/normal.png" alt="Bình thường">
+                                    <span>Bình thường</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reaction">Phản ứng ban đầu *</label>
+                            <textarea id="reaction" name="reaction" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="result">Kết quả cuối cùng *</label>
+                            <textarea id="result" name="result" rows="3"></textarea>
+                        </div>
+
+                        <div class="content-input">
+                            <label for="content">Bài học rút ra *</label>
+                            <textarea id="content" name="content" rows="4" required></textarea>
+                        </div>                        
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button id="btn-save" type="button" class="btn-save">Lưu</button>
+                        <button id="btn-delete" type="button" class="btn-delete">Xóa</button>
+                        <button id="btn-close" type="button" class="btn-close">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal đổi mật khẩu -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePasswordModal()">&times;</span>
+                <h3>Thay đổi mật khẩu</h3>
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="oldPassword">Mật khẩu cũ *</label>
+                        <input type="password" id="oldPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Mật khẩu mới *</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="btn-save" onclick="changePassword()">Lưu</button>
+                        <button type="button" class="btn-close" onclick="closePasswordModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/js/sweetalert2@11.js"></script>
+    <script src="/public/js/script_client.js"></script>
+</body>
+</html>
