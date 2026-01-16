@@ -2,10 +2,13 @@
   "name": "camxuchocsinh",
   "version": "1.0.0",
   "description": "Hệ thống quản lý cảm xúc học sinh",
-  "main": "server.js",
+  "main": "api/index.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.90.1",
