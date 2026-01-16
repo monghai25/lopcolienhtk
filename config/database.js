@@ -5,8 +5,9 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const schema = process.env.DB_SCHEMA || 'lopcolien';
 
 if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
-    process.exit(1);
+    console.warn('⚠️  Warning: Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+    // Không gọi process.exit() để tránh lỗi deployment trên Vercel
+    // Environment variables phải được set trong Vercel dashboard
 }
 
 // Tạo Supabase client
