@@ -1,13 +1,15 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const schema = process.env.DB_SCHEMA || 'lopcolien';
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const schema = process.env.DB_SCHEMA || 'public';
 
 if (!supabaseUrl || !supabaseKey) {
-    console.warn('⚠️  Warning: Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
-    // Không gọi process.exit() để tránh lỗi deployment trên Vercel
-    // Environment variables phải được set trong Vercel dashboard
+    console.warn('⚠️  Warning: Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+    console.warn('⚠️  Set these environment variables in Vercel dashboard:');
+    console.warn('   - SUPABASE_URL');
+    console.warn('   - SUPABASE_ANON_KEY');
+    console.warn('   - DB_SCHEMA (optional, default: public)');
 }
 
 // Tạo Supabase client
