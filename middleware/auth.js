@@ -1,4 +1,4 @@
-const { sql } = require('../config/database');
+const { supabase } = require('../config/database');
 
 // Kiểm tra đăng nhập
 exports.isAuthenticated = async (req, res, next) => {
@@ -9,12 +9,13 @@ exports.isAuthenticated = async (req, res, next) => {
         if (!userId && req.cookies.user_id) {
             userId = req.cookies.user_id;
             
-            const users = await sql`
-                SELECT * FROM users 
-                WHERE del = 0 AND id = ${userId}
-            `;
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('del', 0)
+                .eq('id', userId);
 
-            if (users.length > 0) {
+            if (!error && users && users.length > 0) {
                 const user = users[0];
                 req.session.username = user.username;
                 req.session.role = user.role;
